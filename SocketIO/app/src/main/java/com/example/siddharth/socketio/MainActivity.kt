@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     var send: Button? = null
     var inputText: EditText? = null
     var surface: SurfaceView? = null
-    var x: Float = 0.0f
+    var startX: Float = 0.0f
     var y: Float = 0.0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,24 +35,28 @@ class MainActivity : AppCompatActivity() {
         setSendListener()
     }
 
-//    fun
-
     fun addSurfaceListener() {
         surface?.setOnTouchListener { v, event ->
-            textView?.text = "X = $x, Y = $y"
+//            textView?.text = "X = $x, Y = $y"
             val action = event.action
             when (action and MotionEvent.ACTION_MASK) {
                 MotionEvent.ACTION_DOWN -> {
-                    x = event.rawX
-                    y = event.rawY
+                    startX = event.rawX
+//                    y = event.rawY
 //                    textView?.text = "X = $x, Y = $y"
-                    socket?.emit("mouseEvent", x.toLong())
+//                    socket?.emit("mouseEvent", x.toLong())
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    x = event.rawX
-                    y = event.rawY
+                    val currentX = event.rawX
+                    if (currentX > startX) {
+                        startX = currentX
+                        socket?.emit("mouseEvent", 1)
+                    } else {
+                        startX = currentX
+                        socket?.emit("mouseEvent", 0)
+                    }
+//                    y = event.rawY
 //                    textView?.text = "X = $x, Y = $y"
-                    socket?.emit("mouseEvent", x.toLong())
                 }
             }
             true
